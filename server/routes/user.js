@@ -25,7 +25,7 @@ router.post('/register',(req,res)=>{
                     res.status(201).send('User created')
                 })
                 .catch((err)=>{
-                res.status(400).send(err)
+                    res.status(400).send(err)
             })
         })
     })
@@ -35,23 +35,27 @@ router.post('/login',(req,res)=>{
     User.findOne({email : req.body.email})
         .then((userResult)=>{
             if(!userResult){
-               return res.status(401).send('Authorization failed')
+               return res.status(401).send('Authorization failed 1')
             }
             bcrypt.compare(req.body.password, userResult.password,(err,result)=>{
                 if(result){
                     let access = 'auth'
-                    let token = jwt.sign({_id: userResult._id.toHexString(), access}, 'Zb%u0WV28w8B' ,{
+                    let token = jwt.sign({_id: userResult._id.toHexString(), access}, process.env.JWT_KEY ,{
                         expiresIn: "1h"
                     }).toString()
                     let accessToken = {access,token}
                     userResult.tokens.push(accessToken)
-                    return res.status(200).json({
-                            message: 'Logged in successfully',
-                            accessToken
+                    userResult.save().then(()=>{
+                    }).catch(()=>{
+                            return res.status(401).send('Authorization failed2')
                         })
+                    res.status(200).json({
+                        message: 'Logged in successfully',
+                        accessToken
+                    })
                 }
-                if(err == null){
-                    return res.status(401).send('Authorization failed')
+                else{
+                    return res.status(401).send('Authorization failed3')
                 }
             })
         })
