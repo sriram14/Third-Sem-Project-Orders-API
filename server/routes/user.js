@@ -3,12 +3,26 @@ const User = require('../mongoose-models/users')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
+
+
+const verifyToken = function(req,res,next) {
+    let token = req.body.token || req.query.token || req.headers['x-access-token']
+    if (token) {
+        jwt.verify(token, process.env.JWT_TOKEN, (err, decodedToken) => {
+            if (err) {
+                return res.status(401).send('Authentication failed')
+            }
+            next()
+        })
+    }
+}
+
 router.get('/login',(req,res)=>{
-    res.render('./layouts/login.hbs',{title: "Login"})
+    res.render('./layouts/login.hbs',{title: "Login",subtitle: "Login to your account"})
 })
 
 router.get('/register',(req,res)=>{
-    res.render('./layouts/login.hbs',{title: "Register"})
+    res.render('./layouts/login.hbs',{title: "Register",subtitle: "Register a new account"})
 })
 
 router.post('/register',(req,res)=>{
@@ -39,7 +53,7 @@ router.post('/login',(req,res)=>{
     User.findOne({email : req.body.email})
         .then((userResult)=>{
             if(!userResult){
-               return res.status(401).send('Authorization failed 1')
+               return res.status(401).send('Authorization failed')
             }
             bcrypt.compare(req.body.password, userResult.password,(err,result)=>{
                 if(result){
@@ -51,7 +65,7 @@ router.post('/login',(req,res)=>{
                     userResult.tokens.push(accessToken)
                     userResult.save().then(()=>{
                     }).catch(()=>{
-                            return res.status(401).send('Authorization failed2')
+                            return res.status(401).send('Authorization failed')
                         })
                     res.status(200).json({
                         message: 'Logged in successfully',
@@ -59,7 +73,7 @@ router.post('/login',(req,res)=>{
                     })
                 }
                 else{
-                    return res.status(401).send('Authorization failed3')
+                    return res.status(401).send('Authorization failed')
                 }
             })
         })
@@ -68,9 +82,5 @@ router.post('/login',(req,res)=>{
         })
 })
 
-router.get('/:id',(req,res)=>{
-    const id = req.params.id
-    User.findById({_id: id}).then()
-})
 
 module.exports = router

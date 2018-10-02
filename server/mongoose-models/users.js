@@ -31,10 +31,6 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
-userSchema.methods.generateAuthToken = function(user){
-
-
-}
 //let Supplier = mongoose.model('Supplier',userSchema)
 let User = mongoose.model('Customer',userSchema)
 

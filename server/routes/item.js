@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const Item = require('../mongoose-models/item')
 const ObjectID = require('mongoose').Types.ObjectId
+const verifyToken = require('../db/verify-token')
 
 router.get('/',(req,res)=>{
     Item.find({})
@@ -13,7 +14,7 @@ router.get('/',(req,res)=>{
         })
 })
 
-router.post('/',(req,res)=>{
+router.post('/',verifyToken,(req,res)=>{
     const item = new Item({
         name: req.body.name,
         quantity: req.body.quantity
@@ -44,7 +45,7 @@ router.get('/:id',(req,res)=>{
         })
 })
 
-router.patch('/:id',(req,res)=>{
+router.patch('/:id', verifyToken, (req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
@@ -63,7 +64,7 @@ router.patch('/:id',(req,res)=>{
 })
 
 
-router.delete('/:id',(req,res)=>{
+router.delete('/:id',verifyToken, (req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
