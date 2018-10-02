@@ -3,7 +3,9 @@ const Order = require('../mongoose-models/item')
 const ObjectID = require('mongoose').Types.ObjectId
 
 router.get('/',(req,res)=>{
-    Order.find({}).then((doc)=>{
+    Order.find({})
+        .select('_id name quantity')
+        .then((doc)=>{
         res.status(200).send(doc)
     })
         .catch((err)=>{

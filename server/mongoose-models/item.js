@@ -14,10 +14,6 @@ const itemSchema =  new mongoose.Schema({
     }
 })
 
-itemSchema.methods.getOneItemByID = function(id){
-    let item = Item.find({_id: new ObjectID(id)})
-    item.updateOne()
-}
 
 let Item = mongoose.model('Item',itemSchema)
 

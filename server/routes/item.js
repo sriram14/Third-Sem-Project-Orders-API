@@ -3,7 +3,9 @@ const Item = require('../mongoose-models/item')
 const ObjectID = require('mongoose').Types.ObjectId
 
 router.get('/',(req,res)=>{
-    Item.find({}).then((doc)=>{
+    Item.find({})
+        .select('_id name quantity')
+        .then((doc)=>{
         res.status(200).send(doc)
     })
         .catch((err)=>{
@@ -33,6 +35,7 @@ router.get('/:id',(req,res)=>{
         return res.status(400).send('Invalid ID')
     }
     Item.findById(id)
+        .select('_id name _quantity')
         .then((doc)=>{
             if(doc)
                 res.status(200).send(doc)
