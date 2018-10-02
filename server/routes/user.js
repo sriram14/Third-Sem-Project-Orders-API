@@ -3,8 +3,12 @@ const User = require('../mongoose-models/users')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-router.get('/',(req,res)=>{
+router.get('/login',(req,res)=>{
+    res.render('./layouts/login.hbs',{title: "Login"})
+})
 
+router.get('/register',(req,res)=>{
+    res.render('./layouts/login.hbs',{title: "Register"})
 })
 
 router.post('/register',(req,res)=>{
