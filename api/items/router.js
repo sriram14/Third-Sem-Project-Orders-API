@@ -1,9 +1,10 @@
 const router = require('express').Router()
-const Order = require('../mongoose-models/item')
+const Router = require('./model')
 const ObjectID = require('mongoose').Types.ObjectId
+const verifyToken = require('../../server/db/verify-token')
 
 router.get('/',(req,res)=>{
-    Order.find({})
+    Router.find({})
         .select('_id name quantity')
         .then((doc)=>{
         res.status(200).send(doc)
@@ -13,8 +14,8 @@ router.get('/',(req,res)=>{
         })
 })
 
-router.post('/',(req,res)=>{
-    const item = new Order({
+router.post('/',verifyToken,(req,res)=>{
+    const item = new Router({
         name: req.body.name,
         quantity: req.body.quantity
     })
@@ -34,7 +35,8 @@ router.get('/:id',(req,res)=>{
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
     }
-    Order.findById(id)
+    Router.findById(id)
+        .select('_id name _quantity')
         .then((doc)=>{
             if(doc)
                 res.status(200).send(doc)
@@ -43,7 +45,7 @@ router.get('/:id',(req,res)=>{
         })
 })
 
-router.patch('/:id',(req,res)=>{
+router.patch('/:id', verifyToken, (req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
@@ -53,7 +55,7 @@ router.patch('/:id',(req,res)=>{
     for(let op in req.body){
         updateOps[op] = req.body[op]
     }
-    Order.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
+    Router.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
         res.status(200).send(doc)
     })
         .catch((err)=>{
@@ -62,12 +64,12 @@ router.patch('/:id',(req,res)=>{
 })
 
 
-router.delete('/:id',(req,res)=>{
+router.delete('/:id',verifyToken, (req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
     }
-    Order.deleteOne({_id: id}).then((doc)=>{
+    Router.deleteOne({_id: id}).then((doc)=>{
         if(doc){
             res.status(200).send(`Document deleted successfully`)
             console.log(doc)

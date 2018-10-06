@@ -15,6 +15,6 @@ const itemSchema =  new mongoose.Schema({
 })
 
 
-let Item = mongoose.model('Item',itemSchema)
+let ItemModel = mongoose.model('ItemModel',itemSchema)
 
-module.exports = Item
+module.exports = ItemModel

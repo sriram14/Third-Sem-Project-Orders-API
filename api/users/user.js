@@ -1,9 +1,7 @@
 const router = require('express').Router()
-const User = require('../mongoose-models/users')
+const User = require('./model')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
-
 
 const verifyToken = function(req,res,next) {
     let token = req.body.token || req.query.token || req.headers['x-access-token']
@@ -63,6 +61,7 @@ router.post('/login',(req,res)=>{
                     }).toString()
                     let accessToken = {access,token}
                     userResult.tokens.push(accessToken)
+                    res.cookie('auth-token',token,{expires: new Date(Date.now() + 360000)})
                     userResult.save().then(()=>{
                     }).catch(()=>{
                             return res.status(401).send('Authorization failed')

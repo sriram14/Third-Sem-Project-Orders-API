@@ -1,10 +1,10 @@
 const router = require('express').Router()
-const Item = require('../mongoose-models/item')
+const Router = require('../items/model')
 const ObjectID = require('mongoose').Types.ObjectId
-const verifyToken = require('../db/verify-token')
+const verifyToken = require('../../server/db/verify-token')
 
-router.get('/',(req,res)=>{
-    Item.find({})
+router.get('/',verifyToken,(req,res)=>{
+    Router.find({})
         .select('_id name quantity')
         .then((doc)=>{
         res.status(200).send(doc)
@@ -14,29 +14,12 @@ router.get('/',(req,res)=>{
         })
 })
 
-router.post('/',verifyToken,(req,res)=>{
-    const item = new Item({
-        name: req.body.name,
-        quantity: req.body.quantity
-    })
-
-    item.save()
-        .then((doc)=>{
-            res.send(doc)
-        })
-        .catch((err)=>{
-            res.status(400).send(err)
-        })
-
-})
-
-router.get('/:id',(req,res)=>{
+router.get('/:id',verifyToken,(req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
     }
-    Item.findById(id)
-        .select('_id name _quantity')
+    Router.findById(id)
         .then((doc)=>{
             if(doc)
                 res.status(200).send(doc)
@@ -45,7 +28,7 @@ router.get('/:id',(req,res)=>{
         })
 })
 
-router.patch('/:id', verifyToken, (req,res)=>{
+router.patch('/:id',verifyToken,(req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
@@ -55,7 +38,7 @@ router.patch('/:id', verifyToken, (req,res)=>{
     for(let op in req.body){
         updateOps[op] = req.body[op]
     }
-    Item.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
+    Router.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
         res.status(200).send(doc)
     })
         .catch((err)=>{
@@ -64,12 +47,12 @@ router.patch('/:id', verifyToken, (req,res)=>{
 })
 
 
-router.delete('/:id',verifyToken, (req,res)=>{
+router.delete('/:id',verifyToken,(req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
     }
-    Item.deleteOne({_id: id}).then((doc)=>{
+    Router.deleteOne({_id: id}).then((doc)=>{
         if(doc){
             res.status(200).send(`Document deleted successfully`)
             console.log(doc)

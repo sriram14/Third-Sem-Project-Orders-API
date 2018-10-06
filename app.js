@@ -1,9 +1,9 @@
 const express = require('express')
 const hbs = require('express-handlebars')
 const mongoose = require('./server/db/mongoose')
-const itemRouter = require('./server/routes/item')
-const orderRouter = require('./server/routes/order')
-const userRouter = require('./server/routes/user')
+const itemRouter = require('./api/items/router')
+const orderRouter = require('./api/orders/router')
+const userRouter = require('./api/users/router')
 
 const app = express()
 const port = process.env.port || 3000
