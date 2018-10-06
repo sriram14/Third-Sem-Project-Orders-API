@@ -1,13 +1,13 @@
 const router = require('express').Router()
-const Router = require('./model')
+const Item = require('./model')
 const ObjectID = require('mongoose').Types.ObjectId
 const verifyToken = require('../../server/db/verify-token')
 
 router.get('/',(req,res)=>{
-    Router.find({})
+    Item.find({})
         .select('_id name quantity')
         .then((doc)=>{
-        res.status(200).send(doc)
+        res.render('./layouts/item.hbs',{item: doc,title:'View products'})
     })
         .catch((err)=>{
             res.status(400).send(err)
@@ -15,7 +15,7 @@ router.get('/',(req,res)=>{
 })
 
 router.post('/',verifyToken,(req,res)=>{
-    const item = new Router({
+    const item = new Item({
         name: req.body.name,
         quantity: req.body.quantity
     })
@@ -35,7 +35,7 @@ router.get('/:id',(req,res)=>{
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
     }
-    Router.findById(id)
+    Item.findById(id)
         .select('_id name _quantity')
         .then((doc)=>{
             if(doc)
@@ -55,7 +55,7 @@ router.patch('/:id', verifyToken, (req,res)=>{
     for(let op in req.body){
         updateOps[op] = req.body[op]
     }
-    Router.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
+    Item.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
         res.status(200).send(doc)
     })
         .catch((err)=>{
@@ -69,7 +69,7 @@ router.delete('/:id',verifyToken, (req,res)=>{
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
     }
-    Router.deleteOne({_id: id}).then((doc)=>{
+    Item.deleteOne({_id: id}).then((doc)=>{
         if(doc){
             res.status(200).send(`Document deleted successfully`)
             console.log(doc)

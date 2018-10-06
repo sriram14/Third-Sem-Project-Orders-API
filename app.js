@@ -13,19 +13,16 @@ app.set('view engine', 'hbs');
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+app.get('/', function(req, res) {
+    res.sendFile(__dirname + '/index.html')
+})
 app.use('/item',itemRouter)
 app.use('/order',orderRouter)
 app.use('/user',userRouter)
 
 app.use((req,res,next)=>{
-    const err = new Error('Not found')
-    err.status = 404
-    next(err)
-})
-
-app.use((err,req,res)=>{
-    res.status(err.status || 500)
-    res.render('./layouts/error.hbs',{error:err})
+    res.status = 404
+    res.render('./layouts/error.hbs',{error:'404 Not found'})
 })
 
 app.listen(port , ()=>{

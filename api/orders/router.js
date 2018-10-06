@@ -1,10 +1,10 @@
 const router = require('express').Router()
-const Router = require('../items/model')
+const Order = require('../items/model')
 const ObjectID = require('mongoose').Types.ObjectId
 const verifyToken = require('../../server/db/verify-token')
 
 router.get('/',verifyToken,(req,res)=>{
-    Router.find({})
+    Order.find({})
         .select('_id name quantity')
         .then((doc)=>{
         res.status(200).send(doc)
@@ -19,7 +19,7 @@ router.get('/:id',verifyToken,(req,res)=>{
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
     }
-    Router.findById(id)
+    Order.findById(id)
         .then((doc)=>{
             if(doc)
                 res.status(200).send(doc)
@@ -38,7 +38,7 @@ router.patch('/:id',verifyToken,(req,res)=>{
     for(let op in req.body){
         updateOps[op] = req.body[op]
     }
-    Router.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
+    Order.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
         res.status(200).send(doc)
     })
         .catch((err)=>{
@@ -52,7 +52,7 @@ router.delete('/:id',verifyToken,(req,res)=>{
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
     }
-    Router.deleteOne({_id: id}).then((doc)=>{
+    Order.deleteOne({_id: id}).then((doc)=>{
         if(doc){
             res.status(200).send(`Document deleted successfully`)
             console.log(doc)

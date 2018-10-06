@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+</head>
+<body>
+    <h1>{{title}}</h1>
+    {{#each item}}
+        <div class="item" id="item{{@key}}">
+            <h2>{{name}}</h2>
+            <div class="col">
+                <p>{{quantity}}</p>
+            </div>
+        </div>
+    {{/each}}
+</body>
+</html>
