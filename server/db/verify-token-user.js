@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 
 module.exports = function(req,res,next) {
     let authToken = ''
-    if(req.headers.cookie && res.headers.cookie.includes('authTokenUser')){
+    if(req.headers.cookie && req.headers.cookie.includes('authTokenUser')){
         let cookie = req.headers.cookie.split('=')
         authToken = cookie[1]
     }
