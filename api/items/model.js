@@ -7,7 +7,7 @@ const itemSchema =  new mongoose.Schema({
         trim: true,
         minLength: 1
     },
-    quantity: {
+    price: {
         type: Number,
         required: true,
         default: 1

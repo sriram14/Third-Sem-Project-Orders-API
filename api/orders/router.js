@@ -8,7 +8,7 @@ router.get('/',verifyTokenUser,(req,res)=>{
     Order.find({})
         .populate('itemID')
         .then((doc)=>{
-        res.status(200).send(doc)
+        res.status(200).render('./layouts/item.hbs',{item: doc,title:'View products'})
     })
         .catch((err)=>{
             res.status(400).send(err)
@@ -24,24 +24,28 @@ router.get('/:id',verifyTokenUser,(req,res)=>{
         .populate('itemID')
         .then((doc)=>{
             if(doc)
-                res.status(200).send(doc)
+                res.render('./layouts/product.hbs',{item: doc,type: 'Order'})
             else
                 res.status(400).send('ID not found')
         })
 })
 
-router.post('/',verifyTokenUser,(req,res)=>{
-    Item.findById(req.body.itemID).then(item=>{
+router.post('/:id',verifyTokenUser,(req,res)=>{
+    const id = req.params.id
+    if(!ObjectID.isValid(id)){
+        return res.status(400).send('Invalid ID')
+    }
+    Item.findById(id).then(item=>{
         if(!item){
-            res.status(500).send('Item not found')
+            return res.status(500).send('Item not found')
         }
         const order = new Order({
-        itemID: req.body.itemID,
+        itemID: id,
         quantity: req.body.quantity
     })
     order.save()
         .then((doc)=>{
-            res.send(doc)
+            res.render('./layouts/item.hbs',{item: doc,title:'View orders'})
         })
         .catch((err)=>{
             res.status(400).send(err)

@@ -39,7 +39,7 @@ router.get('/:id',(req,res)=>{
         .select('_id name _quantity')
         .then((doc)=>{
             if(doc)
-                res.status(200).send(doc)
+                res.render('./layouts/product.hbs',{name: doc.name,price: doc.price, type: 'Product',})
             else
                 res.status(400).send('ID not found')
         })
