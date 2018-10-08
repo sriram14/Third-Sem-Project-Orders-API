@@ -4,6 +4,7 @@ const mongoose = require('./server/db/mongoose')
 const itemRouter = require('./api/items/router')
 const orderRouter = require('./api/orders/router')
 const userRouter = require('./api/users/router')
+const cookieParser = require('cookie-parser')
 
 const app = express()
 const port = process.env.port || 3000
@@ -13,6 +14,8 @@ app.set('view engine', 'hbs');
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+app.use(cookieParser())
+
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html')
 })
