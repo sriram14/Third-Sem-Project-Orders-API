@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
-//let Supplier = mongoose.model('Supplier',userSchema)
+let Supplier = mongoose.model('Supplier',userSchema)
 let User = mongoose.model('Customer',userSchema)
 
-module.exports = User
+module.exports = {User,Supplier}

@@ -2,9 +2,9 @@ const router = require('express').Router()
 const Order = require('../orders/model')
 const Item = require('../items/model')
 const ObjectID = require('mongoose').Types.ObjectId
-const verifyToken = require('../../server/db/verify-token')
+const verifyTokenUser = require('../../server/db/verify-token-user')
 
-router.get('/',verifyToken,(req,res)=>{
+router.get('/',verifyTokenUser,(req,res)=>{
     Order.find({})
         .populate('itemID')
         .then((doc)=>{
@@ -15,7 +15,7 @@ router.get('/',verifyToken,(req,res)=>{
         })
 })
 
-router.get('/:id',verifyToken,(req,res)=>{
+router.get('/:id',verifyTokenUser,(req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
@@ -30,7 +30,7 @@ router.get('/:id',verifyToken,(req,res)=>{
         })
 })
 
-router.post('/',verifyToken,(req,res)=>{
+router.post('/',verifyTokenUser,(req,res)=>{
     Item.findById(req.body.itemID).then(item=>{
         if(!item){
             res.status(500).send('Item not found')
@@ -72,7 +72,7 @@ router.post('/',verifyToken,(req,res)=>{
 // })
 
 
-router.delete('/:id',verifyToken,(req,res)=>{
+router.delete('/:id',verifyTokenUser,(req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
         return res.status(400).send('Invalid ID')
