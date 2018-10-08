@@ -3,18 +3,18 @@ const Item = require('./model')
 const ObjectID = require('mongoose').Types.ObjectId
 const verifyToken = require('../../server/db/verify-token')
 
-router.get('/',(req,res)=>{
+router.get('/',verifyToken,(req,res)=>{
     Item.find({})
         .select('_id name quantity')
-        .then((doc)=>{
-        res.render('./layouts/item.hbs',{item: doc,title:'View products'})
-    })
-        .catch((err)=>{
-            res.status(400).send(err)
+        .then((doc) => {
+             res.render('./layouts/item.hbs',{item: doc,title:'View products'})
         })
+        .catch((err) => {
+            res.status(400).send(err)
+        });
 })
 
-router.post('/',verifyToken,(req,res)=>{
+router.post('/',(req,res)=>{
     const item = new Item({
         name: req.body.name,
         quantity: req.body.quantity

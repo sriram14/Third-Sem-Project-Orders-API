@@ -1,15 +1,13 @@
 const mongoose = require('mongoose')
 
 const orderSchema =  new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 1
+    itemID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Item',
+        required: true
     },
     quantity: {
         type: Number,
-        required: true,
         default: 1
     }
 })

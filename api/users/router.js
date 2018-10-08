@@ -61,15 +61,12 @@ router.post('/login',(req,res)=>{
                     }).toString()
                     let accessToken = {access,token}
                     userResult.tokens.push(accessToken)
-                    res.cookie('auth-token',token,{expires: new Date(Date.now() + 3600000)})
+                    res.cookie('authToken',token,{expires: new Date(Date.now() + 3600000)})
                     userResult.save().then(()=>{
                     }).catch(()=>{
                             return res.status(401).send('Authorization failed')
                         })
-                    res.status(200).json({
-                        message: 'Logged in successfully',
-                        accessToken
-                    })
+                    res.status(200).render('./layouts/index.hbs',{user:req.body.email,title:'Welcome'})
                 }
                 else{
                     return res.status(401).send('Authorization failed')

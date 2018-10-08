@@ -6,13 +6,26 @@
 </head>
 <body>
     <h1>{{title}}</h1>
-    {{#each item}}
-        <div class="item" id="item{{@key}}">
-            <h2>{{name}}</h2>
-            <div class="col">
-                <p>{{quantity}}</p>
-            </div>
-        </div>
-    {{/each}}
+    <table border ="1">
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Order</th>
+        </tr>
+        </thead>
+        {{#each item}}
+            <tr class="item" id="item{{@key}}">
+                <td>{{name}}</td>
+                <td class="col"> {{quantity}}</td>
+                <td>
+                    <form method="post">
+                        <input type="number">
+                        <button>Order</button>
+                    </form>
+                </td>
+            </tr>
+        {{/each}}
+    </table>
 </body>
 </html>

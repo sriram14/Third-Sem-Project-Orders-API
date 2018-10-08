@@ -1,11 +1,12 @@
 const router = require('express').Router()
-const Order = require('../items/model')
+const Order = require('../orders/model')
+const Item = require('../items/model')
 const ObjectID = require('mongoose').Types.ObjectId
 const verifyToken = require('../../server/db/verify-token')
 
 router.get('/',verifyToken,(req,res)=>{
     Order.find({})
-        .select('_id name quantity')
+        .populate('itemID')
         .then((doc)=>{
         res.status(200).send(doc)
     })
@@ -20,6 +21,7 @@ router.get('/:id',verifyToken,(req,res)=>{
         return res.status(400).send('Invalid ID')
     }
     Order.findById(id)
+        .populate('itemID')
         .then((doc)=>{
             if(doc)
                 res.status(200).send(doc)
@@ -28,23 +30,46 @@ router.get('/:id',verifyToken,(req,res)=>{
         })
 })
 
-router.patch('/:id',verifyToken,(req,res)=>{
-    const id = req.params.id
-    if(!ObjectID.isValid(id)){
-        return res.status(400).send('Invalid ID')
-    }
-
-    const updateOps = {}
-    for(let op in req.body){
-        updateOps[op] = req.body[op]
-    }
-    Order.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
-        res.status(200).send(doc)
+router.post('/',verifyToken,(req,res)=>{
+    Item.findById(req.body.itemID).then(item=>{
+        if(!item){
+            res.status(500).send('Item not found')
+        }
+        const order = new Order({
+        itemID: req.body.itemID,
+        quantity: req.body.quantity
     })
+    order.save()
+        .then((doc)=>{
+            res.send(doc)
+        })
         .catch((err)=>{
             res.status(400).send(err)
         })
+    })
+        .catch(err=>{
+            res.status(500).send(err)
+        })
+
 })
+//
+// router.patch('/:id',verifyToken,(req,res)=>{
+//     const id = req.params.id
+//     if(!ObjectID.isValid(id)){
+//         return res.status(400).send('Invalid ID')
+//     }
+//
+//     const updateOps = {}
+//     for(let op in req.body){
+//         updateOps[op] = req.body[op]
+//     }
+//     Order.findOneAndUpdate({_id: id},{$set: updateOps},{returnOriginal: false}).then((doc)=>{
+//         res.status(200).send(doc)
+//     })
+//         .catch((err)=>{
+//             res.status(400).send(err)
+//         })
+// })
 
 
 router.delete('/:id',verifyToken,(req,res)=>{
@@ -54,11 +79,11 @@ router.delete('/:id',verifyToken,(req,res)=>{
     }
     Order.deleteOne({_id: id}).then((doc)=>{
         if(doc){
-            res.status(200).send(`Document deleted successfully`)
+            res.status(200).send(`Order deleted successfully`)
             console.log(doc)
         }
         else
-            res.status(400).send('No such item exists')
+            res.status(400).send('No such order exists')
     })
         .catch((err)=>{
             console.log(err)
