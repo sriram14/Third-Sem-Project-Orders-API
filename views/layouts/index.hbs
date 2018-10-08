@@ -7,6 +7,11 @@
 <body>
     <h2>Welcome {{user}}</h2>
     <a href="/item">View items</a>
-    <a href="/order">View your orders</a>
+    {{#if supplier}}
+        <a href="/item">Post new items</a>
+    {{else}}
+        <a href="/order">View your orders</a>
+    {{/if}}
+    <a href="/user/logout">Logout</a>
 </body>
 </html>

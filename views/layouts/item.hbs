@@ -19,9 +19,9 @@
                 <td>{{name}}</td>
                 <td class="col"> {{quantity}}</td>
                 <td>
-                    <form method="post">
+                    <form method="post" action="/order/{{_id}}">
                         <input type="number">
-                        <button>Order</button>
+                        <button>Submit</button>
                     </form>
                 </td>
             </tr>
