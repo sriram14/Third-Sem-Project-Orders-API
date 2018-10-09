@@ -8,6 +8,7 @@ module.exports = function(req,res,next) {
     }
     jwt.verify(authToken, process.env.JWT_KEY, (err, decodedToken) => {
         if(decodedToken){
+            req.name = decodedToken.name
             next()
         }
         else {
