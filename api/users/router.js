@@ -27,14 +27,12 @@ router.get('/login/supplier',(req,res)=>{
 })
 
 router.get('/customer/dashboard',verifyTokenUser,(req,res)=>{
-    res.render('./layouts/index.hbs',{ title:'Customer Dashboard',supplier:false})
+    res.render('./layouts/index.hbs',{ title:'Customer Dashboard',supplier:false,name: 'Customer'})
 })
 
 router.get('/supplier/dashboard',verifyTokenSupplier,(req,res)=>{
-    let id = ''
 
-    console.log(id)
-    res.render('./layouts/index.hbs',{ title:'Supplier Dashboard',supplier:true})
+    res.render('./layouts/index.hbs',{ title:'Supplier Dashboard',supplier:true,name: 'Supplier'})
 })
 
 

@@ -7,18 +7,11 @@ const verifyTokenUser = require('../../server/db/verify-token-user')
 
 
 router.get('/',verifyTokenUser,(req,res)=>{
-    let id = ''
-    if(req.headers.cookie && req.headers.cookie.includes('_id')){
-        id = req.headers.cookie.match('(^|;)\\s*' + '_id' + '\\s*=\\s*([^;]+)')
-        id = id? id.pop():''
-        id = id.substr(7,24)
-    }
-    User.findById(id)
+    User.findById(req.id)
         .select('orders')
         .populate('orders.order')
         .then((doc)=>{
             let orders = doc.orders
-            console.log(orders)
             res.status(200).render('./layouts/order.hbs',{item: orders,title:'View Orders'})
     })
         .catch((err)=>{
@@ -54,13 +47,8 @@ router.post('/:id',verifyTokenUser,(req,res)=>{
             itemID: id,
             quantity: req.body.quantity
     })
-        let UID = ''
-        if(req.headers.cookie){
-            UID = req.headers.cookie.match('(^|;)\\s*' + '_id' + '\\s*=\\s*([^;]+)')
-            UID = UID? UID.pop():''
-            UID= UID.substr(7,24)
-        }
-        User.findById(UID).then((user)=>{
+
+        User.findById(req.id).then((user)=>{
             let saveOrder = {order: id, quantity: req.body.quantity}
             user.orders.push(saveOrder)
             order.save()
