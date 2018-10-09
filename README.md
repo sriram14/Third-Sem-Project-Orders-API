@@ -12,4 +12,5 @@ If you want to use/test this project in your PC, make sure you've got these prog
  3. Run nodemon app.js to start the app and open http://localhost:3000 in your browser.
  4. (Optional) Install Robo3T from https://robomongo.org/ to view the database entries in a GUI.
  
- Note: This project is developed for local environent only. You should make modifications if you're planning to deploy it to a server.
+ Note: This project is developed for local environent only as a project for one of my credit courses. You should make modifications if you're planning to deploy it to a server.
+ 
