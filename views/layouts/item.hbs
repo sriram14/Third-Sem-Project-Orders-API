@@ -10,17 +10,17 @@
         <thead>
         <tr>
             <th>Item</th>
-            <th>Quantity</th>
+            <th>Price</th>
             <th>Order</th>
         </tr>
         </thead>
         {{#each item}}
             <tr class="item" id="item{{@key}}">
                 <td>{{name}}</td>
-                <td class="col"> {{quantity}}</td>
+                <td>{{price}}</td>
                 <td>
                     <form method="post" action="/order/{{_id}}">
-                        <input type="number">
+                        <label>Quantity<input name ="quantity" type="number"></label>
                         <button>Submit</button>
                     </form>
                 </td>
