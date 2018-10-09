@@ -7,8 +7,13 @@ const orderSchema =  new mongoose.Schema({
         required: true
     },
     quantity: {
+        min: 1,
         type: Number,
         default: 1
+    },
+    date: {
+        type: Date,
+        default: Date.now
     }
 })
 

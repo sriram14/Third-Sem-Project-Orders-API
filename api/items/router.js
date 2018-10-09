@@ -5,7 +5,7 @@ const verifyTokenSupplier = require('../../server/db/verify-token-supplier')
 
 router.get('/',(req,res)=>{
     Item.find({})
-        .select('_id name quantity')
+        .select('_id name price')
         .then((doc) => {
              res.render('./layouts/item.hbs',{item: doc,title:'View products'})
         })
@@ -14,15 +14,19 @@ router.get('/',(req,res)=>{
         });
 })
 
+router.get('/new',verifyTokenSupplier,(req,res)=>{
+    res.render('./layouts/create-item.hbs',{title:'Add product'})
+})
+
 router.post('/',verifyTokenSupplier ,(req,res)=>{
     const item = new Item({
         name: req.body.name,
-        quantity: req.body.quantity
+        price: req.body.price
     })
 
     item.save()
         .then((doc)=>{
-            res.send(doc)
+            res.render('./layouts/product.hbs',{type: 'Product', name: req.body.name, price: req.body.price,title:'View product',user: 'Supplier'})
         })
         .catch((err)=>{
             res.status(400).send(err)
@@ -36,7 +40,7 @@ router.get('/:id',(req,res)=>{
         return res.status(400).send('Invalid ID')
     }
     Item.findById(id)
-        .select('_id name _quantity')
+        .select('_id name price')
         .then((doc)=>{
             if(doc)
                 res.render('./layouts/product.hbs',{name: doc.name,price: doc.price, type: 'Product',})

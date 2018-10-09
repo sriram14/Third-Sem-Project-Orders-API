@@ -10,32 +10,31 @@ const verifyTokenSupplier = require('../../server/db/verify-token-supplier')
 const verifyTokenUser = require('../../server/db/verify-token-user')
 
 
-router.use(session({
-    secret: process.env.JWT_KEY,
-    resave: true,
-    saveUninitialized: false
-}))
-
 router.use(cookieParser())
 
 router.get('/login/customer',(req,res)=>{
     res.clearCookie('authTokenSupplier')
     res.clearCookie('authTokenUser')
+    res.clearCookie('_id')
     res.render('./layouts/login.hbs',{title: "Customer Login",subtitle: "Login to your account",register: false})
 })
 
 router.get('/login/supplier',(req,res)=>{
     res.clearCookie('authTokenSupplier')
     res.clearCookie('authTokenUser')
+    res.clearCookie('_id')
     res.render('./layouts/login.hbs',{title: "Supplier Login",subtitle: "Login to your account",register: false})
 })
 
 router.get('/customer/dashboard',verifyTokenUser,(req,res)=>{
-    res.render('./layouts/index.hbs',{user: req.session.user.name,title:'Customer Dashboard',supplier:false})
+    res.render('./layouts/index.hbs',{ title:'Customer Dashboard',supplier:false})
 })
 
 router.get('/supplier/dashboard',verifyTokenSupplier,(req,res)=>{
-    res.render('./layouts/index.hbs',{user: req.session.user.name ,title:'Supplier Dashboard',supplier:true})
+    let id = ''
+
+    console.log(id)
+    res.render('./layouts/index.hbs',{ title:'Supplier Dashboard',supplier:true})
 })
 
 
@@ -56,6 +55,7 @@ router.get('/logout',(req,res)=>{
             } else {
                 res.clearCookie('authTokenSupplier')
                 res.clearCookie('authTokenUser')
+                res.clearCookie('_id')
                 return res.redirect('/');
             }
         })
@@ -127,6 +127,7 @@ router.post('/login/customer',(req,res)=>{
                     let accessToken = {access,token}
                     userResult.tokens.push(accessToken)
                     res.cookie('authTokenUser',token,{expires: new Date(Date.now() + 3600000)})
+                    res.cookie('_id',userResult._id)
                     userResult.save().then(()=>{
                         req.session.user = userResult
                         res.redirect('/user/customer/dashboard')
@@ -160,11 +161,11 @@ router.post('/login/supplier',(req,res)=>{
                     let accessToken = {access,token}
                     userResult.tokens.push(accessToken)
                     res.cookie('authTokenSupplier',token,{expires: new Date(Date.now() + 3600000)})
+                    res.cookie('_id',userResult._id)
                     userResult.save().then(()=>{
                     }).catch(()=>{
                         //res.status(401).send('Authorization failed')
                     })
-                    req.session.user = userResult
                     res.redirect('/user/supplier/dashboard')
                 }
                 else{

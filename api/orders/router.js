@@ -1,14 +1,25 @@
 const router = require('express').Router()
 const Order = require('../orders/model')
 const Item = require('../items/model')
+const {User} = require('../users/model')
 const ObjectID = require('mongoose').Types.ObjectId
 const verifyTokenUser = require('../../server/db/verify-token-user')
 
+
 router.get('/',verifyTokenUser,(req,res)=>{
-    Order.find({})
-        .populate('itemID')
+    let id = ''
+    if(req.headers.cookie && req.headers.cookie.includes('_id')){
+        id = req.headers.cookie.match('(^|;)\\s*' + '_id' + '\\s*=\\s*([^;]+)')
+        id = id? id.pop():''
+        id = id.substr(7,24)
+    }
+    User.findById(id)
+        .select('orders')
+        .populate('orders.order')
         .then((doc)=>{
-        res.status(200).render('./layouts/item.hbs',{item: doc,title:'View products'})
+            let orders = doc.orders
+            console.log(orders)
+            res.status(200).render('./layouts/order.hbs',{item: orders,title:'View Orders'})
     })
         .catch((err)=>{
             res.status(400).send(err)
@@ -33,27 +44,43 @@ router.get('/:id',verifyTokenUser,(req,res)=>{
 router.post('/:id',verifyTokenUser,(req,res)=>{
     const id = req.params.id
     if(!ObjectID.isValid(id)){
-        return res.status(400).send('Invalid ID')
+        res.status(400).send('Invalid ID')
     }
     Item.findById(id).then(item=>{
         if(!item){
-            return res.status(500).send('Item not found')
+            res.status(500).send('Item not found')
         }
         const order = new Order({
-        itemID: id,
-        quantity: req.body.quantity
+            itemID: id,
+            quantity: req.body.quantity
     })
-    order.save()
-        .then((doc)=>{
-            res.render('./layouts/item.hbs',{item: doc,title:'View orders'})
+        let UID = ''
+        if(req.headers.cookie){
+            UID = req.headers.cookie.match('(^|;)\\s*' + '_id' + '\\s*=\\s*([^;]+)')
+            UID = UID? UID.pop():''
+            UID= UID.substr(7,24)
+        }
+        User.findById(UID).then((user)=>{
+            let saveOrder = {order: id, quantity: req.body.quantity}
+            user.orders.push(saveOrder)
+            order.save()
+                .then(()=>{
+                    res.redirect('/order')
+                },(err)=>{
+                    throw new Error(err)
+                })
+                user.save().then(()=>{
+                    console.log('Success')
+                },(err)=>{
+                    throw new Error(err)
+                })
+            },(err)=>{
+                throw new Error(err)
         })
-        .catch((err)=>{
-            res.status(400).send(err)
-        })
-    })
-        .catch(err=>{
+        }).catch((err)=>{
             res.status(500).send(err)
         })
+
 
 })
 //

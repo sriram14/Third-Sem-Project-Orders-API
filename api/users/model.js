@@ -25,6 +25,23 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 6
     },
+
+    orders: [{
+        order:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Item',
+            required: true
+        },
+        quantity:{
+            type: Number,
+            required: true
+        },
+        date: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+
     tokens: [{
         access: {
             type: String,
