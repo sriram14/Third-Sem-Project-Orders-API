@@ -5,9 +5,20 @@ const itemRouter = require('./api/items/router')
 const orderRouter = require('./api/orders/router')
 const userRouter = require('./api/users/router')
 const cookieParser = require('cookie-parser')
-
+const session = require('express-session')
+const cookie = require('cookie-parser')
 const app = express()
 const port = process.env.port || 3000
+
+app.use(session({
+    secret: process.env.JWT_KEY,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+        path: '/',
+        httpOnly: false
+    }
+}))
 
 app.engine('hbs', hbs({extname: 'hbs', layoutsDir: __dirname + '/views/layouts/'}));
 app.set('view engine', 'hbs');
