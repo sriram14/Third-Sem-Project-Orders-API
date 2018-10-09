@@ -1,5 +1,12 @@
 # Third-Sem-Project-Orders-API
-It's a simple e-commerce project where users can sign up and place orders. Suppliers can add products while customers can purchase them. This project uses NodeJS+Express+MongoDB
+It's a simple e-commerce project where users can sign up and place orders. Suppliers can add products while customers can purchase them. This project uses MongoDB+Express+NodeJS
+
+Project details:
+It's a simple ecommerce-like portal where suppliers and customers can register accounts. Suppliers can only add products to the database and view products from it. Customers can view products and order them.
+
+This project uses NodeJS+Express for the backend and handlebars for template rendering. Authentication is implemented and logged in user information is stored in cookies and retrived when needed (to access private routes).
+
+There are private routes for customers and suppliers which can be accessed only by them after logging in. JWT is used for token verification.
 
 If you want to use/test this project in your PC, make sure you've got these programs installed:
  1. NodeJS v10
